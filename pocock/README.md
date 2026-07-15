@@ -22,6 +22,7 @@ General-purpose agent skills, adapted from [Matt Pocock's skills](https://github
 - **[to-spec](./to-spec/SKILL.md)** — synthesize the current conversation into a spec at `.plan/<slug>/spec.md`.
 - **[to-tickets](./to-tickets/SKILL.md)** — break a plan or spec into tracer-bullet tickets at `.plan/<slug>/tickets.md`.
 - **[wayfinder](./wayfinder/SKILL.md)** — chart a big, foggy effort as a map of investigation tickets, resolved one per session. Storage is adapter-specific; the default is [local markdown](./wayfinder/TRACKER-MARKDOWN.md) under `.plan/<slug>/`.
+- **[wayfinder-prune](./wayfinder-prune/SKILL.md)** — sweep a wayfinder map and settle the low-stakes questions on the model's own judgment, behind one hard-gated review where you keep or prune every candidate at once.
 - **[writing-great-skills](./writing-great-skills/SKILL.md)** — reference for writing and editing skills well.
 
 **Model-invoked** — reachable by the agent on its own (and by other skills), or by typing their name.
