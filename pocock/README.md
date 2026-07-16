@@ -8,7 +8,7 @@ General-purpose agent skills, adapted from [Matt Pocock's skills](https://github
 
 ## Shared conventions
 
-- **`.plan/`** — the project's planning memory, committed to version control. Specs (`.plan/<slug>/spec.md`), ticket breakdowns (`.plan/<slug>/tickets.md`), wayfinder maps (`.plan/<slug>/map.md` + `.plan/<slug>/tickets/NN-<slug>.md`), and handoffs (`.plan/handoffs/`).
+- **`.plan/`** — the project's planning memory, committed to version control. Specs (`.plan/<slug>/spec.md`), wayfinder planning maps (`.plan/<slug>/map.md` + `.plan/<slug>/tickets/NN-<slug>.md`), implementation maps (`.plan/<slug>-impl/`, same shape), and handoffs (`.plan/handoffs/`).
 - **`CONTEXT.md`** at the repo root — the domain glossary; **`docs/adr/`** — architecture decision records. Both created lazily by `domain-modeling`; skills that read them proceed silently when they don't exist.
 
 ## Skills
@@ -20,7 +20,7 @@ General-purpose agent skills, adapted from [Matt Pocock's skills](https://github
 - **[handoff](./handoff/SKILL.md)** — compact the current conversation into a handoff document (`.plan/handoffs/`) so a fresh agent can continue.
 - **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)** — scan for deepening opportunities, present as a visual HTML report, then grill through the chosen one.
 - **[to-spec](./to-spec/SKILL.md)** — synthesize the current conversation into a spec at `.plan/<slug>/spec.md`.
-- **[to-tickets](./to-tickets/SKILL.md)** — break a plan or spec into tracer-bullet tickets at `.plan/<slug>/tickets.md`.
+- **[to-tickets](./to-tickets/SKILL.md)** — break a plan or spec into tracer-bullet implementation tickets, written as a wayfinder map (`.plan/<slug>-impl/`) a visualization tool can track progress against.
 - **[wayfinder](./wayfinder/SKILL.md)** — chart a big, foggy effort as a map of investigation tickets, resolved one per session. Storage is adapter-specific; the default is [local markdown](./wayfinder/TRACKER-MARKDOWN.md) under `.plan/<slug>/`.
 - **[wayfinder-prune](./wayfinder-prune/SKILL.md)** — sweep a wayfinder map and settle the low-stakes questions on the model's own judgment, behind one hard-gated review where you keep or prune every candidate at once.
 - **[writing-great-skills](./writing-great-skills/SKILL.md)** — reference for writing and editing skills well.

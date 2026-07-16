@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, saved to `.plan/`.
+description: Break a plan, spec, or the current conversation into tracer-bullet implementation tickets, written as a wayfinder map — one file per ticket under `.plan/<slug>-impl/`, so a visualization tool can track implementation progress.
 disable-model-invocation: true
 ---
 
@@ -8,11 +8,25 @@ disable-model-invocation: true
 
 Break a plan, spec, or conversation into a set of **tickets** — tracer-bullet vertical slices, each declaring the tickets that **block** it.
 
+The output is a **wayfinder implementation map**: a real wayfinder map in the local-markdown adapter's format, not a flat checklist. One `map.md` plus one file per ticket, under `.plan/<slug>-impl/`. This is what lets a wayfinder visualization tool render the tickets as a graph and track progress against it — the same tool that reads a planning map reads this one, because it *is* a planning map, one whose Notes carry execution rather than decisions.
+
+**Read [`wayfinder/TRACKER-MARKDOWN.md`](../wayfinder/TRACKER-MARKDOWN.md) before writing anything.** It is the format contract: where files live, what frontmatter carries structure, how status is derived, and the checklist to verify before committing. Everything below defers to it — this skill only says how an *implementation* map differs from a planning one. If the repo wires a different wayfinder adapter, use that adapter instead; the format is never invented here.
+
+## How an implementation map differs from a planning map
+
+A planning map (plain `wayfinder`) charts **decisions** and resolves them by grilling. An implementation map charts **work** and resolves it by shipping code. The adapter is identical; three things differ, and the templates below bake them in:
+
+- **Every ticket is `type: task`** — wayfinder's one type that *does* rather than decides. No research/prototype/grilling tickets; the deciding already happened on the planning map.
+- **The Notes carry execution.** wayfinder is "plan, don't do" by default and lets an effort override that in its Notes; an implementation map always does. The template's Notes block is that override — adapt it, don't drop it.
+- **There is no fog.** Every question is settled in the spec, so **Not yet specified** stays empty; a genuinely new question goes back to the planning map rather than opening fog here.
+
+Everything else — file layout, numeric `blocked_by` edges, derived status, claims, the verify checklist — is exactly the adapter.
+
 ## Process
 
 ### 1. Gather context
 
-Work from whatever is already in the conversation context. If the user passes a reference (a spec path such as `.plan/<slug>/spec.md`, or any other document) as an argument, fetch it and read it in full.
+Work from whatever is already in the conversation context. If the user passes a reference (a spec path such as `.plan/<slug>/spec.md`, or any other document) as an argument, fetch it and read it in full — it is the source of truth the map executes.
 
 ### 2. Explore the codebase (optional)
 
@@ -42,7 +56,7 @@ Give each ticket its **blocking edges** — the other tickets that must complete
 Present the proposed breakdown as a numbered list. For each ticket, show:
 
 - **Title**: short descriptive name
-- **Blocked by**: which other tickets (if any) must complete first
+- **Blocked by**: which other tickets (if any) must complete first — refer to them by title, not number, at this stage
 - **What it delivers**: the end-to-end behaviour this ticket makes work
 
 Ask the user:
@@ -51,37 +65,72 @@ Ask the user:
 - Are the blocking edges correct — does each ticket only depend on tickets that genuinely gate it?
 - Should any tickets be merged or split further?
 
-Iterate until the user approves the breakdown.
+Iterate until the user approves the breakdown. Only once approved do you assign numbers and write files — numbering before approval invites churn in the `blocked_by` edges.
 
-### 5. Save the tickets
+### 5. Write the implementation map
 
-Write the approved tickets to `.plan/<slug>/tickets.md`, all tickets in dependency order (blockers first), each with its "Blocked by" listing the titles it depends on. Use the template below. `<slug>` is a short kebab-case name for the work — if the tickets came from a spec at `.plan/<slug>/spec.md`, use the same directory. Create it if needed; `.plan/` is committed to version control. Tell the user the path.
+Write to `.plan/<slug>-impl/`, a **sibling** of the spec's directory. `<slug>` is the spec's own slug: if the tickets came from `.plan/<slug>/spec.md`, write to `.plan/<slug>-impl/` so the plan and its implementation sit side by side. Create the directory if needed; `.plan/` is committed to version control. Tell the user the path.
 
-If the work came from an existing spec or plan document, reference it at the top of the file — do NOT modify or delete the source document.
+Do **not** modify or delete the source spec or planning map — the implementation map references them.
 
-<tickets-file-template>
+Assign each ticket a number from `01` in dependency order (blockers first). Then write, following the adapter exactly:
 
-# Tickets: <short name of the work>
+- **`map.md`** — the map body, per the template below.
+- **`tickets/NN-<slug>.md`** — one file per ticket, per the template below. `blocked_by` is a numeric array of the ticket numbers that gate it — translate the titles from step 4 into numbers here.
 
-A one-line summary of what these tickets build. Reference the source spec if there is one.
+<map-template>
 
-Work the **frontier**: any ticket whose blockers are all done. For a purely linear chain that means top to bottom.
+# <Feature> — implementation
 
-## <Ticket title>
+## Destination
 
-**What to build:** the end-to-end behaviour this ticket makes work, from the user's perspective — not a layer-by-layer implementation list.
+<The spec implemented end to end, from the user's perspective — what "done" looks like when every ticket has shipped. Link the spec. One short paragraph.>
 
-**Blocked by:** the titles of the tickets that gate this one, or "None — can start immediately".
+## Notes
 
-- [ ] Acceptance criterion 1
-- [ ] Acceptance criterion 2
+**This map carries execution.** Every ticket is a `task` that delivers working code, not a decision — all decisions were made on the [planning map](../<slug>/map.md) and synthesized into the [spec](../<slug>/spec.md), which is the single source of truth here. Do not re-litigate a decision; if implementation exposes one as wrong, mark the *planning* ticket undermined and raise it, rather than quietly deviating.
 
-## <Ticket title>
+<Per-session reading order (spec, then this map, then the ticket, then any approved asset it names); the vocabulary source (CONTEXT.md); the review/verify skills to use before commit; the per-ticket static checks and test commands; anything about the dev environment a fresh session needs; and the map's linter command if the repo wires one.>
 
-...
+## Decisions so far
 
-</tickets-file-template>
+<!-- one line per resolved ticket: gist + link. Empty until the first ticket ships. -->
 
-Avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
+## Not yet specified
 
-Work the frontier one ticket at a time, each in a fresh session: implement the slice, run the project's static checks and tests, review the work (with the `review-code` skill if it's available in your environment), tick off the acceptance criteria in `tickets.md`, and commit — then clear context before taking the next ticket.
+<!-- Empty. Every decision is settled in the spec; this map only executes it. A ticket that exposes a genuinely new question sends it back to the planning map — it does not open fog here. -->
+
+## Out of scope
+
+<!-- Inherited from the spec's Out of Scope; these never graduate into tickets on this map. -->
+
+- **<thing ruled out>** — <why, one line>
+
+</map-template>
+
+<ticket-template>
+
+---
+type: task
+blocked_by: [NN, NN]
+---
+
+# <Ticket title>
+
+## Question
+
+<What this ticket makes work, end to end, from the user's perspective — the tracer bullet, not a layer-by-layer implementation list. Name the seams and symbols the spec already fixed, since they are decided; avoid brittle line-level file paths that go stale. Where the spec's Testing Decisions call for tests-first, say which test leads and that it lands red before the implementation.>
+
+Done when: <the observable condition that proves the slice shipped — the tests that go green and the behaviour a human can verify.>
+
+</ticket-template>
+
+**`blocked_by: []`** when a ticket can start immediately. No acceptance-criteria checkboxes: a ticket's status is *derived* the adapter's way — an `## Answer` resolves it — so a checklist would be a second copy of "Done when" that goes stale in one home.
+
+### 6. Verify before committing
+
+Run the adapter's **Verify before you commit** checklist over what you wrote — edges name tickets that exist and form no cycle, numbers are used once, no ticket carries a closing section yet, the map states no progress count. If the repo wires a map linter, run it. Then commit the map and tickets together.
+
+## Working the map
+
+Work it in fresh sessions exactly as wayfinder works any map — one frontier ticket per session, claimed before work, verified against the adapter's checklist before commit. What is specific to shipping code: run the project's static checks and tests, review the diff (`review-code` if available), and drive the real behaviour (`verify`/`run`) where "Done when" is only real at runtime — then **resolve by shipping**, appending `## Answer` with what shipped plus a gist + link to the map's **Decisions so far**. Writing that answer *is* resolving, and it is what turns the ticket green in the visualization tool — so progress is read from the map, never written down as a count.
