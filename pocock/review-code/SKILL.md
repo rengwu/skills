@@ -25,7 +25,7 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 Look for the originating spec, in this order:
 
 1. A path the user passed as an argument.
-2. A spec under `.plan/` — typically `.plan/<slug>/spec.md`, matching the branch name or feature.
+2. A spec under `.plan/` — typically `.plan/maps/<slug>/spec.md`, matching the branch name or feature.
 3. A PRD/spec file elsewhere in the repo (`docs/`, `specs/`, or similar) matching the branch name or feature.
 4. Issue references in the commit messages (`#123`, `Closes #45`, etc.) — if the environment has a way to fetch them (e.g. the repo host's CLI), fetch the referenced issue.
 5. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** axis will skip and report "no spec available".

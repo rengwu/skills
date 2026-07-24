@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: Turn the current conversation into a spec, saved to `.plan/` — no interview, just synthesis of what you've already discussed.
+description: Turn the current conversation into a spec, saved to `.plan/maps/` — no interview, just synthesis of what you've already discussed.
 disable-model-invocation: true
 ---
 
@@ -14,7 +14,7 @@ This skill takes the current conversation context and codebase understanding and
 
 Check with the user that these seams match their expectations.
 
-3. Write the spec using the template below, then save it to `.plan/<slug>/spec.md`, where `<slug>` is a short kebab-case name for the work (reuse the directory if one already exists for this effort). Create the directory if needed — `.plan/` is committed to version control; it is the project's shared planning memory. Tell the user the path.
+3. Write the spec using the template below, then save it to `.plan/maps/<slug>/spec.md`, where `<slug>` is a short kebab-case name for the work (reuse the directory if one already exists for this effort — a wayfinder planning map for the same effort lives there too). Create the directory if needed — `.plan/` is committed to version control; it is the project's shared planning memory. Tell the user the path.
 
 <spec-template>
 

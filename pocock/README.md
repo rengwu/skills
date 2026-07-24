@@ -8,7 +8,7 @@ General-purpose agent skills, adapted from [Matt Pocock's skills](https://github
 
 ## Shared conventions
 
-- **`.plan/`** — the project's planning memory, committed to version control. Specs (`.plan/<slug>/spec.md`), wayfinder planning maps (`.plan/<slug>/map.md` + `.plan/<slug>/tickets/NN-<slug>.md`), implementation maps (`.plan/<slug>-impl/`, same shape), and handoffs (`.plan/handoffs/`).
+- **`.plan/`** — the project's planning memory, committed to version control. Each effort gets a directory under `.plan/maps/`, holding its spec (`.plan/maps/<slug>/spec.md`) alongside its wayfinder planning map (`.plan/maps/<slug>/map.md` + `.plan/maps/<slug>/tickets/NN-<slug>.md`); implementation maps sit beside it at `.plan/maps/<slug>-impl/`, same shape. Handoffs (`.plan/handoffs/`) and research notes (`.plan/research/`) live outside `maps/`.
 - **`CONTEXT.md`** at the repo root — the domain glossary; **`docs/adr/`** — architecture decision records. Both created lazily by `domain-modeling`; skills that read them proceed silently when they don't exist.
 
 ## Skills
@@ -19,9 +19,9 @@ General-purpose agent skills, adapted from [Matt Pocock's skills](https://github
 - **[grill-with-docs](./grill-with-docs/SKILL.md)** — grill-me plus live domain-model upkeep: updates `CONTEXT.md` and ADRs as decisions crystallise.
 - **[handoff](./handoff/SKILL.md)** — compact the current conversation into a handoff document (`.plan/handoffs/`) so a fresh agent can continue.
 - **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)** — scan for deepening opportunities, present as a visual HTML report, then grill through the chosen one.
-- **[to-spec](./to-spec/SKILL.md)** — synthesize the current conversation into a spec at `.plan/<slug>/spec.md`.
-- **[to-tickets](./to-tickets/SKILL.md)** — break a plan or spec into tracer-bullet implementation tickets, written as a wayfinder map (`.plan/<slug>-impl/`) a visualization tool can track progress against.
-- **[wayfinder](./wayfinder/SKILL.md)** — chart a big, foggy effort as a map of investigation tickets, resolved one per session. Storage is adapter-specific; the default is [local markdown](./wayfinder/TRACKER-MARKDOWN.md) under `.plan/<slug>/`.
+- **[to-spec](./to-spec/SKILL.md)** — synthesize the current conversation into a spec at `.plan/maps/<slug>/spec.md`.
+- **[to-tickets](./to-tickets/SKILL.md)** — break a plan or spec into tracer-bullet implementation tickets, written as a wayfinder map (`.plan/maps/<slug>-impl/`) a visualization tool can track progress against.
+- **[wayfinder](./wayfinder/SKILL.md)** — chart a big, foggy effort as a map of investigation tickets, resolved one per session. Storage is adapter-specific; the default is [local markdown](./wayfinder/TRACKER-MARKDOWN.md) under `.plan/maps/<slug>/`.
 - **[wayfinder-prune](./wayfinder-prune/SKILL.md)** — sweep a wayfinder map and settle the low-stakes questions on the model's own judgment, behind one hard-gated review where you keep or prune every candidate at once.
 - **[writing-great-skills](./writing-great-skills/SKILL.md)** — reference for writing and editing skills well.
 
